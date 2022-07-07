@@ -4,7 +4,7 @@ const { Afdian } = require('afdian')
 
 const userId = core.getInput('user-id') || process.env.AFDIAN_USER_ID
 const token = core.getInput('token') || process.env.AFDIAN_TOKEN
-const mdPath = core.getInput('markdown', { required: false }) || 'README.md'
+const mdPath = core.getMultilineInput('markdown', { required: false }) || ['README.md']
 
 const client = new Afdian({
     userId,
@@ -80,15 +80,19 @@ async function main() {
         return content
     }
 
-    const md = fs.readFileSync(mdPath, 'utf-8')
-    const start = md.indexOf('<!-- afdian-start -->')
-    const end = md.indexOf('<!-- afdian-end -->')
-    const transformed = md.slice(0, start + '<!-- afdian-start -->'.length)
-        + '\n'
-        + generateContent()
-        + '\n'
-        + md.slice(end)
-    fs.writeFileSync(mdPath, transformed)
+    for (const p of mdPath) {
+        try {
+            const md = fs.readFileSync(p, 'utf-8')
+            const start = md.indexOf('<!-- afdian-start -->')
+            const end = md.indexOf('<!-- afdian-end -->')
+            const transformed = md.slice(0, start + '<!-- afdian-start -->'.length)
+                + '\n'
+                + generateContent()
+                + '\n'
+                + md.slice(end)
+            fs.writeFileSync(p, transformed)
+        } catch (e) { console.error(e) }
+    }
 }
 
 main()
