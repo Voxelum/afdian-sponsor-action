@@ -1,0 +1,17 @@
+name: 'aifadian sponsors'
+description: 'Generate markdown content for aifadian sponsors list'
+author: 'CI010'
+inputs:
+  token:
+    description: 'Aifadian token'
+    required: true
+  user-id:
+    description: 'Aifadian user id'
+    required: true
+  markdown:
+    description: 'The markdown path'
+    required: false
+
+runs:
+  using: 'node16'
+  main: 'index.js'
